@@ -3,6 +3,9 @@ MANIFEST
 Makefile.PL
 README
 lib/String/Clean.pm
+lib/String/Clean/XSS.pm
 t/00-load.t
+t/10-string_clean.t
+t/11-clean_XSS.t
 t/pod-coverage.t
 t/pod.t
