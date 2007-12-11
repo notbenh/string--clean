@@ -134,9 +134,6 @@ A shortcut that does the same thing as passing {replace => 'word'} to replace.
 
 sub replace_word {
    my ( $self, $hash, $string , $opt) = @_;
-   assert_hashref($hash);
-   assert_defined($string);
-   $opt = $self->_check_for_opt($opt);
    $opt->{replace} = 'word';
    return $self->replace($hash, $string, $opt);
 }
@@ -180,9 +177,6 @@ A shortcut that does the same thing as passing {strip => 'word'} to strip.
 
 sub strip_word {
    my ( $self, $list, $string , $opt) = @_;
-   assert_listref($list);
-   assert_defined($string);
-   $opt = $self->_check_for_opt($opt);
    $opt->{strip} = 'word';
    return $self->strip($list, $string, $opt);
 }
@@ -307,7 +301,6 @@ sub _check_for_opt {
       return $opt;
    }
 }
-
 
 =head1 AUTHOR
 
