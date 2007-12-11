@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Test::More qw{no_plan};
-use String::Clean;
+use String::Clean qw{replace strip};
 
 #---------------------------------------------------------------------------
 #  NEW
