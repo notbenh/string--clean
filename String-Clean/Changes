@@ -6,3 +6,6 @@ Revision history for String-Clean
 0.011   12/07
         the 'oops I forgot to modify the MANIFEST and Changes files' version
 
+0.02    12/07
+        Added $opt->{escape} and $opt->{word_boundary}
+
