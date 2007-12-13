@@ -10,11 +10,11 @@ String::Clean - use data objects to clean strings
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.011';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -63,6 +63,15 @@ call as needed.
          Just like replace, if the value is set to 'word' then strip will look
          for words instead of just a collection of charicters. 
 
+   word_ boundary :
+         Hook to change what String::Clean will use as the word boundry, by 
+         default it will use '\b'. Mainly this would allow String::Clean to 
+         deal with strings like 'this,is,a,test'.
+
+   escape :
+         If this is set to 'no' then String::Clean will not try to escape any 
+         of the things that you've asked it to look for.  
+
 You can also override options at the function level again, but this happens as
 merged hash, for example:
 
@@ -110,15 +119,22 @@ sub replace {
    assert_hashref($hash);
    assert_defined($string);
    $opt = $self->_check_for_opt($opt);
-   my $o = _build_opt($opt->{opt});
+   my $o = _build_opt( $opt->{opt} );
+   my $b = _boundary( $opt->{word_boundary} );
+
    foreach my $key ( keys(%$hash) ) {
+      my $qmkey = quotemeta($key) unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
+   
+use Data::Dumper;
+warn Dumper('DEBUG',$hash,$string, $o, $b, $opt, $qmkey, $hash->{$key});
+
       if ( defined($opt->{replace}) 
-           && $opt->{replace} =~ m/word/i 
+           && $opt->{replace} =~ m/^word$/i 
       ) {
-         $string =~ s/(?$o)\b$key\b/$hash->{$key}/ge;
+         $string =~ s/(^|$b)$qmkey($b|$)/$1$hash->{$key}$2/g;
       }
       else {
-         $string =~ s/(?$o)$key/$hash->{$key}/ge;
+         $string =~ s/(?$o)$qmkey/$hash->{$key}/g;
       }
    }
    return $string;
@@ -157,10 +173,12 @@ sub strip {
    assert_defined($string);
    $opt = $self->_check_for_opt($opt);
    my $o = _build_opt($opt->{opt});
+   my $b = _boundary( $opt->{word_boundary} );
+   $list = [map{ quotemeta } @$list ] unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
    my $s = ( defined($opt->{strip}) 
-             && $opt->{strip} =~ m/word/i
+             && $opt->{strip} =~ m/^word$/i
            ) 
-         ? sprintf( q{\b%s\b}, join '\b|\b', @$list )
+         ? join '|', map{ $b.$_.$b } @$list
          : join '|', @$list
          ;
    $string =~ s/(?$o)(?:$s)//g;
@@ -301,6 +319,13 @@ sub _check_for_opt {
       return $opt;
    }
 }
+
+
+sub _boundary {
+   my ( $b ) = @_;
+   return ( defined($b) ) ? $b : '\b';
+}
+
 
 =head1 AUTHOR
 
