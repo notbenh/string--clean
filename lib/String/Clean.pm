@@ -125,9 +125,6 @@ sub replace {
    foreach my $key ( keys(%$hash) ) {
       my $qmkey = quotemeta($key) unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
    
-use Data::Dumper;
-warn Dumper('DEBUG',$hash,$string, $o, $b, $opt, $qmkey, $hash->{$key});
-
       if ( defined($opt->{replace}) 
            && $opt->{replace} =~ m/^word$/i 
       ) {
