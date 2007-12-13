@@ -32,6 +32,12 @@ is (
 );
 
 is (
+   $obj->replace( { a => 'A', '*' => '*' }, 'this,is,a,test', { replace => 'word', word_boundary => ','}),
+   'this,is,A,test',
+   q{word replace}
+);
+
+is (
    $obj->replace_word( { a => 'A' }, 'a add' ),
    'A add',
    q{word replace via replace_word}
@@ -53,7 +59,7 @@ is (
 );
 
 is (
-   $obj->strip( [qw{a}], 'a add', {strip => 'word'}),
+   $obj->strip( [qw{a *}], 'a add', {strip => 'word'}),
    ' add',
    q{word strip}
 );
