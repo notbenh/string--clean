@@ -26,8 +26,14 @@ is (
 );
 
 is (
-   $obj->replace( { a => 'A' }, 'a add', {replace => 'word'}),
-   'A add',
+   $obj->replace( { a => 'A' }, 'this is a test', {replace => 'word'}),
+   'this is A test',
+   q{word replace}
+);
+
+is (
+   $obj->replace( { a => 'A', '*' => '*' }, 'this,is,a,test', { replace => 'word', word_boundary => ','}),
+   'this,is,A,test',
    q{word replace}
 );
 
@@ -53,7 +59,7 @@ is (
 );
 
 is (
-   $obj->strip( [qw{a}], 'a add', {strip => 'word'}),
+   $obj->strip( [qw{a *}], 'a add', {strip => 'word'}),
    ' add',
    q{word strip}
 );
@@ -98,9 +104,15 @@ q{clean by yaml example from the docs}
 $obj  = String::Clean->new({replace => 'word', strip => 'word', opt => 'i'});
 
 is (
-   $obj->replace( {a => 'cat'}, 'A attatude' ),
-   'cat attatude',
+   $obj->replace( {a => 'cat'}, 'this is still A test' ),
+   'this is still A test',
    q{functions will inherit the options from self},
+);
+
+is (
+   $obj->replace( {this => 'cat'}, 'this is still A test' ),
+   'cat is still A test',
+   q{checking to see if we can strip from the begining of the string},
 );
 
 is (
