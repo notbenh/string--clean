@@ -12,6 +12,7 @@ WriteMakefile(
         'Test::More' => 0,
         'Carp::Assert::More' => 0,
         'YAML' => 0,
+        'Test::Pod::Coverage' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'String-Clean-*' },

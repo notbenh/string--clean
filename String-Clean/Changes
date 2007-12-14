@@ -9,3 +9,8 @@ Revision history for String-Clean
 0.02    12/07
         Added $opt->{escape} and $opt->{word_boundary}
 
+0.021   12/07 
+        adding Test::Pod::Coverage to the reqs for the pod test, it seems to
+        be bailing on NetBSD:
+        http://www.nntp.perl.org/group/perl.cpan.testers/2007/12/msg856161.html
+
