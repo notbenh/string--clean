@@ -127,7 +127,7 @@ orginization
 via data objects.
 ----
 Strip is an array
-%%%ePRE:
+%%%%PRE:
 s/[&lt;&gt;]//g 
 %%%%
 becomes 
@@ -169,21 +169,17 @@ OK, bad example
 but it 
 makes the point
 ----
-%%%%EM:What%%%% is
+%%%%EM:WHAT%%%% is
 more important 
-then %%%%EM:how%%%%
+then %%%%EM:HOW%%%%
 ----
-String::Clean 
-makes the %%%%EM:What%%%%
-obvious
+with String::Clean 
+%%%%EM:WHAT%%%% 
+is obvious
 ----
 So lets look at another example
 ----
 %%%%PRE:
-      $line =~ s/\&amp;\#65279;//g;
-      $line =~ s/\&amp;\#61472;//g;
-      $line =~ s/\&amp;\#8212;?//g;
-      $line =~ s/\&amp;\#8217;?//g;
       $line =~ s/\xfeff//g;
       $line =~ s/\x00//g;
       $line =~ s/\x01//g;
@@ -192,70 +188,39 @@ So lets look at another example
       $line =~ s/\x13//g;
       $line =~ s/\x14//g;
       $line =~ s/\x16//g;
-      $line =~ s/\x18/'/g;
-      $line =~ s/\x19/'/g;
       $line =~ s/\x1c//g;
       $line =~ s/\x1d//g;
       $line =~ s/\x1e//g;
-      $line =~ s/\x22/"/g;
-      $line =~ s/\xbc/&amp;uuml;/g;
-      $line =~ s/\x5e\x52/'/g;
-      $line =~ s/\xe2\x80\x99/"/g;
-      $line =~ s/\xe2\x80\x9c/'/g;
-      $line =~ s/\x80\x99/'/g;
       $line =~ s/\x80//g;
-      $line =~ s/\x81/&amp;\#8734;/g;
-      $line =~ s/\x82/'/g;
-      $line =~ s/\x83/&amp;acirc;/g;
       $line =~ s/\x84//g;
-      $line =~ s/\x85/&amp;agrave;/g;
       $line =~ s/\x86//g;
       $line =~ s/\x87//g;
       $line =~ s/\x88//g;
       $line =~ s/\x89//g;
-      $line =~ s/\x8a/ /g;
-      $line =~ s/\x8b/ /g;
       $line =~ s/\x8c//g;
       $line =~ s/\x8d//g;
       $line =~ s/\x8e//g;
       $line =~ s/\x8f//g;
-      $line =~ s/\x90/&amp;pi;/g;
       $line =~ s/\x91/[/g;
-      $line =~ s/\x92/'/g;
-      $line =~ s/\x93/"/g;
-      $line =~ s/\x94/"/g;
       $line =~ s/\x95//g;
-      #$line =~ s/\x96/&amp;amp;/g;
-      $line =~ s/\x96/ &amp;#38; /g;
-      $line =~ s/\x97/&amp;mdash;/g;
       $line =~ s/\x98//g;
-      $line =~ s/\x99/&amp;trade;/g;
       $line =~ s/\x9a//g;
       $line =~ s/\x9b//g;
       $line =~ s/\x9c//g;
       $line =~ s/\x9d//g;
-      $line =~ s/\x9e/&amp;radic;/g;
       $line =~ s/\x9f//g;
-      $line =~ s/\xa0/"/g;
       $line =~ s/\xa1//g;
       $line =~ s/\xa2//g;
       $line =~ s/\xa3//g;
-      $line =~ s/\xa4/&amp;ntilde;/g;
       $line =~ s/\xa5//g;
       $line =~ s/\xa6//g;
       $line =~ s/\xa7//g;
-      $line =~ s/\xa8/&amp;iquest;/g;
       $line =~ s/\xa9//g;
       $line =~ s/\xaa//g;
       $line =~ s/\xab//g;
       $line =~ s/\xac//g;
       $line =~ s/\xad//g;
-      $line =~ s/\xae/&amp;laquo;/g;
-      $line =~ s/\xaf/&amp;raquo;/g;
-      $line =~ s/\xb0/"/g;
       $line =~ s/\xb1//g;
-      $line =~ s/\xb2/"/g;
-      $line =~ s/\xb3/"/g;
       $line =~ s/\xb4//g;
       $line =~ s/\xb5//g;
       $line =~ s/\xb6//g;
@@ -268,7 +233,6 @@ So lets look at another example
       $line =~ s/\xbd//g;
       $line =~ s/\xbe//g;
       $line =~ s/\xbf//g;
-      $line =~ s/\xB//g;
       $line =~ s/\xc0//g;
       $line =~ s/\xc1//g;
       $line =~ s/\xc2//g;
@@ -291,7 +255,6 @@ So lets look at another example
       $line =~ s/\xd3//g;
       $line =~ s/\xd4//g;
       $line =~ s/\xd5//g;
-      $line =~ s/\xd6/&amp;Ouml;/g;
       $line =~ s/\xd7//g;
       $line =~ s/\xd8//g;
       $line =~ s/\xd9//g;
@@ -301,47 +264,36 @@ So lets look at another example
       $line =~ s/\xdd//g;
       $line =~ s/\xde//g;
       $line =~ s/\xdf//g;
-      $line =~ s/\xe0/&amp;agrave;/g;
-      $line =~ s/\xe1/&amp;aacute;/g;
-      $line =~ s/\xe2\x80\xa2//g;
-      $line =~ s/\xe2/'/g;
       $line =~ s/\xe3//g;
-      $line =~ s/\xe4/&amp;auml;/g;
       $line =~ s/\xe5//g;
       $line =~ s/\xe6/e/g;  # latin ae
       $line =~ s/\xe7//g;
       $line =~ s/\xe8//g;
-      $line =~ s/\xe9/&amp;eacute;/g;
       $line =~ s/\xea//g;
-      $line =~ s/\xeb/&amp;euml;/g;
-      #$line =~ s/\xEB/&amp;euml;/g;
       $line =~ s/\xec//g;
-      $line =~ s/\xed/&amp;iacute;/g;
       $line =~ s/\xee//g;
       $line =~ s/\xef//g;
       $line =~ s/\xf0//g;
-      $line =~ s/\xf1/&amp;ntilde;/g;
       $line =~ s/\xf2//g;
-      $line =~ s/\xf3/&amp;oacute;/g;
       $line =~ s/\xf4/o/g;
       $line =~ s/\xf5//g;
-      $line =~ s/\xf6/&amp;ouml;/g;
       $line =~ s/\xf7//g;
-      $line =~ s/\xf8/&amp;oslash;/g;
       $line =~ s/\xf9//g;
-      $line =~ s/\xfa/&amp;uacute;/g;
       $line =~ s/\xfb//g;
-      $line =~ s/\xFC/&amp;#252;/g;
-      $line =~ s/\xfc/&amp;#252;/g;
       $line =~ s/\xfd//g;
       $line =~ s/\xfe//g;
       $line =~ s/\xff//g;
-      $line =~ s/\&amp;amp;/and/g;
-      $line =~ s/\s\&amp;\s/and/g;
 :PRE%%%%
-this is a small example what about:
-{{ BETTER EXAMPLE }}
-
+----
+What?
+----
+103 lines
+3 replaces
+100 strips
+----
+... messy ...
+----
+So 
 
 
 
