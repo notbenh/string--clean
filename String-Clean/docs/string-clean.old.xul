@@ -177,127 +177,353 @@ with String::Clean
 %%%%EM:WHAT%%%% 
 is obvious
 ----
-but even
-this can be
-improved
----- 
-Enter
-YAML
-----
-String::Clean
-allows for 
-clean by yaml
-----
-Same example
-again
+So lets look at another example
 ----
 %%%%PRE:
-sub clean_scary_data {
-  use String::Clean;
-  my ($in) = @_;
-  my $sc = String::Clean->new();
-  my $yaml = q{
+      $line =~ s/\xfeff//g;
+      $line =~ s/\x00//g;
+      $line =~ s/\x01//g;
+      $line =~ s/\x11//g;
+      $line =~ s/\x12//g;
+      $line =~ s/\x13//g;
+      $line =~ s/\x14//g;
+      $line =~ s/\x16//g;
+      $line =~ s/\x1c//g;
+      $line =~ s/\x1d//g;
+      $line =~ s/\x1e//g;
+      $line =~ s/\x80//g;
+      $line =~ s/\x84//g;
+      $line =~ s/\x86//g;
+      $line =~ s/\x87//g;
+      $line =~ s/\x88//g;
+      $line =~ s/\x89//g;
+      $line =~ s/\x8c//g;
+      $line =~ s/\x8d//g;
+      $line =~ s/\x8e//g;
+      $line =~ s/\x8f//g;
+      $line =~ s/\x91/[/g;
+      $line =~ s/\x95//g;
+      $line =~ s/\x98//g;
+      $line =~ s/\x9a//g;
+      $line =~ s/\x9b//g;
+      $line =~ s/\x9c//g;
+      $line =~ s/\x9d//g;
+      $line =~ s/\x9f//g;
+      $line =~ s/\xa1//g;
+      $line =~ s/\xa2//g;
+      $line =~ s/\xa3//g;
+      $line =~ s/\xa5//g;
+      $line =~ s/\xa6//g;
+      $line =~ s/\xa7//g;
+      $line =~ s/\xa9//g;
+      $line =~ s/\xaa//g;
+      $line =~ s/\xab//g;
+      $line =~ s/\xac//g;
+      $line =~ s/\xad//g;
+      $line =~ s/\xb1//g;
+      $line =~ s/\xb4//g;
+      $line =~ s/\xb5//g;
+      $line =~ s/\xb6//g;
+      $line =~ s/\xb7//g;
+      $line =~ s/\xb8//g;
+      $line =~ s/\xb9//g;
+      $line =~ s/\xba//g;
+      $line =~ s/\xbb//g;
+      $line =~ s/\xbc//g;
+      $line =~ s/\xbd//g;
+      $line =~ s/\xbe//g;
+      $line =~ s/\xbf//g;
+      $line =~ s/\xc0//g;
+      $line =~ s/\xc1//g;
+      $line =~ s/\xc2//g;
+      $line =~ s/\xc3//g;
+      $line =~ s/\xc4//g;
+      $line =~ s/\xc5//g;
+      $line =~ s/\xc6//g;
+      $line =~ s/\xc7//g;
+      $line =~ s/\xc8//g;
+      $line =~ s/\xc9//g;
+      $line =~ s/\xca//g;
+      $line =~ s/\xcb//g;
+      $line =~ s/\xcc//g;
+      $line =~ s/\xcd//g;
+      $line =~ s/\xce//g;
+      $line =~ s/\xcf//g;
+      $line =~ s/\xd0//g;
+      $line =~ s/\xd1//g;
+      $line =~ s/\xd2//g;
+      $line =~ s/\xd3//g;
+      $line =~ s/\xd4//g;
+      $line =~ s/\xd5//g;
+      $line =~ s/\xd7//g;
+      $line =~ s/\xd8//g;
+      $line =~ s/\xd9//g;
+      $line =~ s/\xda//g;
+      $line =~ s/\xdb//g;
+      $line =~ s/\xdc//g;
+      $line =~ s/\xdd//g;
+      $line =~ s/\xde//g;
+      $line =~ s/\xdf//g;
+      $line =~ s/\xe3//g;
+      $line =~ s/\xe5//g;
+      $line =~ s/\xe6/e/g;  # latin ae
+      $line =~ s/\xe7//g;
+      $line =~ s/\xe8//g;
+      $line =~ s/\xea//g;
+      $line =~ s/\xec//g;
+      $line =~ s/\xee//g;
+      $line =~ s/\xef//g;
+      $line =~ s/\xf0//g;
+      $line =~ s/\xf2//g;
+      $line =~ s/\xf4/o/g;
+      $line =~ s/\xf5//g;
+      $line =~ s/\xf7//g;
+      $line =~ s/\xf9//g;
+      $line =~ s/\xfb//g;
+      $line =~ s/\xfd//g;
+      $line =~ s/\xfe//g;
+      $line =~ s/\xff//g;
+:PRE%%%%
+----
+What?
+----
+103 lines
+3 replaces
+100 strips
+----
+... messy ...
+----
+So we could
+build a hash
+build an array
+----
+String::Clean  
+also allows YAML
+----
+Sweet!
+----
+So lets look
+at the same 
+example as YAML
+----
 ---
-'&amp;nbsp;' : ' '
+'\x91' : '['
+'\xf4' : 'o'
+'\xe6' : 'e'
 ---
-- &lt;
-- &gt;
+- '\xfeff'
+- '\x00'
+- '\x01'
+- '\x11'
+- '\x12'
+- '\x13'
+- '\x16'
+- '\x1c'
+- '\x1d'
+- '\x1e'
+- '\x80'
+- '\x84'
+- '\x86'
+- '\x87'
+- '\x88'
+- '\x89'
+- '\x8c'
+- '\x8d'
+- '\x8e'
+- '\x8f'
+- '\x95'
+- '\x98'
+- '\x9a'
+- '\x9b'
+- '\x9c'
+- '\x9d'
+- '\x9f'
+- '\xa1'
+- '\xa2'
+- '\xa3'
+- '\xa5'
+- '\xa6'
+- '\xa7'
+- '\xa9'
+- '\xaa'
+- '\xab'
+- '\xac'
+- '\xad'
+- '\xb1'
+- '\xb4'
+- '\xb5'
+- '\xb6'
+- '\xb7'
+- '\xb8'
+- '\xb9'
+- '\xba'
+- '\xbb'
+- '\xbc'
+- '\xbd'
+- '\xbe'
+- '\xbf'
+- '\xc0'
+- '\xc1'
+- '\xc2'
+- '\xc3'
+- '\xc4'
+- '\xc5'
+- '\xc6'
+- '\xc7'
+- '\xc8'
+- '\xc9'
+- '\xca'
+- '\xcb'
+- '\xcc'
+- '\xcd'
+- '\xce'
+- '\xcf'
+- '\xd0'
+- '\xd1'
+- '\xd2'
+- '\xd3'
+- '\xd4'
+- '\xd5'
+- '\xd7'
+- '\xd8'
+- '\xd9'
+- '\xda'
+- '\xdb'
+- '\xdc'
+- '\xdd'
+- '\xde'
+- '\xdf'
+- '\xe3'
+- '\xe5'
+- '\xe7'
+- '\xe8'
+- '\xea'
+- '\xec'
+- '\xee'
+- '\xef'
+- '\xf0'
+- '\xf2'
+- '\xf5'
+- '\xf7'
+- '\xf9'
+- '\xfb'
+- '\xfd'
+- '\xfe'
+- '\xff'
+----
+sub convert_oddspecial {
+   my ( $string ) = @_;
+   assert_defined($string);
+   my $yaml = q{
+---
+'\x91' : '['
+'\xf4' : 'o'
+'\xe6' : 'e'
+---
+- '\xfeff'
+- '\x00'
+- '\x01'
+- '\x11'
+- '\x12'
+- '\x13'
+- '\x14'
+- '\x16'
+- '\x1c'
+- '\x1d'
+- '\x1e'
+- '\x80'
+- '\x84'
+- '\x86'
+- '\x87'
+- '\x88'
+- '\x89'
+- '\x8c'
+- '\x8d'
+- '\x8e'
+- '\x8f'
+- '\x95'
+- '\x98'
+- '\x9a'
+- '\x9b'
+- '\x9c'
+- '\x9d'
+- '\x9f'
+- '\xa1'
+- '\xa2'
+- '\xa3'
+- '\xa5'
+- '\xa6'
+- '\xa7'
+- '\xa9'
+- '\xaa'
+- '\xab'
+- '\xac'
+- '\xad'
+- '\xb1'
+- '\xb4'
+- '\xb5'
+- '\xb6'
+- '\xb7'
+- '\xb8'
+- '\xb9'
+- '\xba'
+- '\xbb'
+- '\xbc'
+- '\xbd'
+- '\xbe'
+- '\xbf'
+- '\xc0'
+- '\xc1'
+- '\xc2'
+- '\xc3'
+- '\xc4'
+- '\xc5'
+- '\xc6'
+- '\xc7'
+- '\xc8'
+- '\xc9'
+- '\xca'
+- '\xcb'
+- '\xcc'
+- '\xcd'
+- '\xce'
+- '\xcf'
+- '\xd0'
+- '\xd1'
+- '\xd2'
+- '\xd3'
+- '\xd4'
+- '\xd5'
+- '\xd7'
+- '\xd8'
+- '\xd9'
+- '\xda'
+- '\xdb'
+- '\xdc'
+- '\xdd'
+- '\xde'
+- '\xdf'
+- '\xe3'
+- '\xe5'
+- '\xe7'
+- '\xe8'
+- '\xea'
+- '\xec'
+- '\xee'
+- '\xef'
+- '\xf0'
+- '\xf2'
+- '\xf5'
+- '\xf7'
+- '\xf9'
+- '\xfb'
+- '\xfd'
+- '\xfe'
+- '\xff'
 };
-  return $sc->clean_by_yaml($yaml, $in);
+   return String::Clean->new()->clean_by_yaml( $yaml, $string, { opt => 'i'} );
 }
-:PRE%%%%
-----
-%%%%EM:~whew~%%%%
-----
-so lets back 
-up and explain
-----
-clean_by_yaml
-takes an array
-of streams
-----
-allows 
-sequential
-cleaning
-----
-example:
-%%%%EM: ~look for better example ~%%%%
-1) replace '&amp;amp;nbsp;' with '&amp;nbsp;'
-2) replace '&amp;nbsp; to ' '
-----
-%%%%EM:NEED%%%% 
-to do #1 first
-----
-because hash 
-order is not guaranteed
----
-%%%%PRE:
-$yaml = q{
----
-'&amp;amp;nbsp;' : '&amp;nbsp;'
----
-'&amp;nbsp;      : ' '
-};
-:PRE%%%%
-----
-So now off 
-to options
-----
-there are when 
-being greedy is not 
-what you want
-----
-%%%%EM:work on this%%%%
-----
-the robot 
-is dumb
-----
-Stop caring about case 
-{ opt => 'i' }
-%%%%PRE:
-$sc->clean_by_yaml( 
-  q{&amp;nbsp : ' '} , 
-  $in ,
-  { opt => 'i' }
-);
-:PRE%%%%
-----
 
-
-
-
-   replace : 
-         If the value is set to 'word' then the replace function will look for 
-         words instead of just a collection of charicters. 
-         example: 
-
-            replace( { is => 'was' },
-                     'this is a test',
-                   ); 
-            returns 'thwas was a test', where 
-
-
-            replace( { is => 'was' },
-                     'this is a test',
-                     { replace => 'word' },
-                   ); 
-            will return 'this was a test' 
-
-   strip :
-         Just like replace, if the value is set to 'word' then strip will look
-         for words instead of just a collection of charicters. 
-
-   word_ boundary :
-         Hook to change what String::Clean will use as the word boundry, by 
-         default it will use '\b'. Mainly this would allow String::Clean to 
-         deal with strings like 'this,is,a,test'.
-
-   escape :
-         If this is set to 'no' then String::Clean will not try to escape any 
-         of the things that you've asked it to look for.  
-
-----
--end-
 
 
 </html:textarea>
