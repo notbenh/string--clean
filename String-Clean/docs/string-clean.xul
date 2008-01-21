@@ -164,7 +164,7 @@ sub clean_scary_data {
 :PRE%%%%
 ----
 Ugg, 
-it's longer.
+it's longer
 ----
 easy
 portable
@@ -245,6 +245,8 @@ was_CTRL : ALT
 };
 :PRE%%%%
 ----
+Questions?
+----
 So now off to 
 common options
 ----
@@ -290,6 +292,9 @@ $clean = $sc->replace(
 ----
 See more 
 at CPAN
+----
+Other 
+Questions?
 ----
 -end-
 
