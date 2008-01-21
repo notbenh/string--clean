@@ -94,6 +94,7 @@ Yuck...
 easy, sure
 not portable
 not orginized
+not manager safe
 ----
 Lets try again
 ----
@@ -114,6 +115,9 @@ it's portable
 Still poorly 
 orginized
 ----
+Still not
+manager safe
+----
 Enter
 String::Clean
 ----
@@ -132,7 +136,7 @@ s/[&lt;&gt;]//g
 %%%%
 becomes 
 %%%%PRE:
-[qw{&lt; &gt;}]
+['&lt;', '&gt;']
 :PRE%%%%
 ----
 Replace is a hash
@@ -161,6 +165,11 @@ sub clean_scary_data {
 ----
 Ugg, 
 it's longer.
+----
+easy
+portable
+orginized
+%%%%EM:NOT%%%% manager safe
 ----
 Why is this
 better?
@@ -207,7 +216,8 @@ sub clean_scary_data {
 }
 :PRE%%%%
 ----
-%%%%EM:~whew~%%%%
+%%%%EM:~FINALY~%%%% 
+manager safe
 ----
 so lets back 
 up and explain
@@ -221,81 +231,65 @@ sequential
 cleaning
 ----
 example:
-%%%%EM: ~look for better example ~%%%%
-1) replace '&amp;amp;nbsp;' with '&amp;nbsp;'
-2) replace '&amp;nbsp; to ' '
+swap 'CTRL' and 'ALT' 
+in a file
 ----
-%%%%EM:NEED%%%% 
-to do #1 first
-----
-because hash 
-order is not guaranteed
----
 %%%%PRE:
-$yaml = q{
+my $yaml = q{
 ---
-'&amp;amp;nbsp;' : '&amp;nbsp;'
+CTRL     : was_CTRL
 ---
-'&amp;nbsp;      : ' '
+ALT      : CTRL
+---
+was_CTRL : ALT
 };
 :PRE%%%%
 ----
-So now off 
-to options
+So now off to 
+common options
 ----
-there are when 
-being greedy is not 
-what you want
+Regex Options
 ----
-%%%%EM:work on this%%%%
-----
-the robot 
-is dumb
-----
-Stop caring about case 
-{ opt => 'i' }
 %%%%PRE:
-$sc->clean_by_yaml( 
-  q{&amp;nbsp : ' '} , 
-  $in ,
-  { opt => 'i' }
+$string = s/this/that/ig
+:PRE%%%%
+becomes
+%%%%PRE:
+$clean = $sc->replace( 
+   { this => 'that' }, 
+   $string, 
+   { opt => 'i'} 
 );
 :PRE%%%%
 ----
-
-
-
-
-   replace : 
-         If the value is set to 'word' then the replace function will look for 
-         words instead of just a collection of charicters. 
-         example: 
-
-            replace( { is => 'was' },
-                     'this is a test',
-                   ); 
-            returns 'thwas was a test', where 
-
-
-            replace( { is => 'was' },
-                     'this is a test',
-                     { replace => 'word' },
-                   ); 
-            will return 'this was a test' 
-
-   strip :
-         Just like replace, if the value is set to 'word' then strip will look
-         for words instead of just a collection of charicters. 
-
-   word_ boundary :
-         Hook to change what String::Clean will use as the word boundry, by 
-         default it will use '\b'. Mainly this would allow String::Clean to 
-         deal with strings like 'this,is,a,test'.
-
-   escape :
-         If this is set to 'no' then String::Clean will not try to escape any 
-         of the things that you've asked it to look for.  
-
+Word Boundries
+----
+%%%%PRE:
+$string = s/\bis\b//g;
+:PRE%%%%
+becomes
+%%%%PRE:
+$clean = $sc->strip(
+   ['is'],
+   $string,
+   {strip => 'word'}
+);
+:PRE%%%%
+----
+%%%%PRE:
+$string = s/\bI\b/we/g;
+:PRE%%%%
+becomes
+%%%%PRE:
+$clean = $sc->replace(
+   { I => 'we' },
+   $string,
+   {replace => 'word'}
+);
+:PRE%%%%
+----
+See more 
+at CPAN
 ----
 -end-
 
