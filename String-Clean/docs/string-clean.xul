@@ -74,7 +74,7 @@ Scary
 It's dangerous
 out there.
 ----
-So lets make
+So let's make
 things safer.
 ----
 strip '&lt;' and '&gt;'
@@ -93,7 +93,7 @@ Yuck...
 ----
 easy, sure
 not portable
-not orginized
+not organized
 not manager safe
 ----
 Lets try again
@@ -113,7 +113,7 @@ Better,
 it's portable
 ----
 Still poorly 
-orginized
+organized
 ----
 Still not
 manager safe
@@ -124,10 +124,10 @@ String::Clean
 Only two types 
 of cleaning:
 Replacing
-Striping
+Stripping
 ----
 String::Clean
-orginization
+organization
 via data objects.
 ----
 Strip is an array
@@ -168,7 +168,7 @@ it's longer
 ----
 easy
 portable
-orginized
+organized
 %%%%EM:NOT%%%% manager safe
 ----
 Why is this
@@ -216,10 +216,10 @@ sub clean_scary_data {
 }
 :PRE%%%%
 ----
-%%%%EM:~FINALY~%%%% 
+%%%%EM:FINALLY~%%%% 
 manager safe
 ----
-so lets back 
+so let's back 
 up and explain
 ----
 clean_by_yaml
@@ -264,7 +264,7 @@ $clean = $sc->replace(
 );
 :PRE%%%%
 ----
-Word Boundries
+Word Boundaries
 ----
 %%%%PRE:
 $string = s/\bis\b//g;
