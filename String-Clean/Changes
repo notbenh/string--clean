@@ -14,3 +14,5 @@ Revision history for String-Clean
         be bailing on NetBSD:
         http://www.nntp.perl.org/group/perl.cpan.testers/2007/12/msg856161.html
 
+0.022   02/08
+        doc changes, added some acknowledgments and theres now a presentation in the docs folder

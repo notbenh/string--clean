@@ -14,7 +14,7 @@ Version 0.021
 
 =cut
 
-our $VERSION = '0.021';
+our $VERSION = '0.022';
 
 =head1 SYNOPSIS
 
@@ -368,6 +368,7 @@ L<http://search.cpan.org/dist/String-Clean>
 
 
 =head1 ACKNOWLEDGEMENTS
+Lindsey Kuper and Jeff Griffin for giving me a reason to cook up this scheme.
 
 
 =head1 COPYRIGHT & LICENSE
