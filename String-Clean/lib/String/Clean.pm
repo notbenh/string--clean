@@ -102,6 +102,7 @@ has escape => (
    default => 1,
 );
 
+#  !!!!!!!!!!! CRAP !!!!!!!!!!!!
 has [qw{replace_word strip_word}] => (
    is => 'rw',
    isa => 'Bool',
@@ -134,29 +135,10 @@ sub replace {
 
    while ( my ($search, $replace) = each %$hash ) {
       $search = $self->_manage_search($search);
-      $search = quotemeta($search) if $self->escape ;
-      $search = sprintf q{(?%s)%s}, $self->opt, $search ;
-      if ( $self->replace_word ) {
-         $search  = sprintf q{(^|%s)%s(%1$s|$)}, $opt->word_boundary, $search;
-         $replace = sprintf q{$1%s$2}, $replace ;
-      }
+      $replace = sprintf q{$1%s$2}, $replace 
+         if ( $self->replace_word ) ;
       $string =~ s/$search/$replace/g;
    }
-=pod
-   foreach my $key ( keys(%$hash) ) {
-
-      my $qmkey = quotemeta($key) unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
-   
-      if ( defined($opt->{replace}) 
-           && $opt->{replace} =~ m/^word$/i 
-      ) {
-         $string =~ s/(^|$b)$qmkey($b|$)/$1$hash->{$key}$2/g;
-      }
-      else {
-         $string =~ s/(?$o)$qmkey/$hash->{$key}/g;
-      }
-   }
-=cut
    return $string;
 }
 
@@ -192,37 +174,13 @@ Takes an arrayref of items to completely remove from the string.
 
 sub strip {
    my ( $self, $list, $string , $opt) = @_;
-=pod
-sub replace {
-   my ( $self, $hash, $string , $opt) = @_;
-   assert_hashref($hash);
-   assert_defined($string);
-   $self->set(%$opt) if defined $opt && ref($opt) eq 'HASH';
 
-   while ( my ($search, $replace) = each %$hash ) {
-      $search = quotemeta($search) if $self->escape ;
-      $search = sprintf q{(?%s)%s}, $self->opt, $search ;
-      if ( $self->replace_word ) {
-         $search  = sprintf q{(^|%s)%s(%1$s|$)}, $opt->word_boundary, $search;
-         $replace = sprintf q{$1%s$2}, $replace ;
-      }
-      $string =~ s/$search/$replace/g;
+   assert_listref($list);
+   assert_defined($string);
+   foreach my $search (@$list) {
+      $search = $self->_manage_search($search);
+      $string =~ s/$search//g;
    }
-=cut
-   assert_hashref($hash);
-   assert_defined($string);
-   $self->set(%$opt) if defined $opt && ref($opt) eq 'HASH';
-
-   my $o = _build_opt($opt->{opt});
-   my $b = _boundary( $opt->{word_boundary} );
-   $list = [map{ quotemeta } @$list ] unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
-   my $s = ( defined($opt->{strip}) 
-             && $opt->{strip} =~ m/^word$/i
-           ) 
-         ? join '|', map{ $b.$_.$b } @$list
-         : join '|', @$list
-         ;
-   $string =~ s/(?$o)(?:$s)//g;
    return $string;
 }
 
@@ -235,6 +193,14 @@ A shortcut that does the same thing as passing {strip => 'word'} to strip.
 =cut
 
 sub strip_word {
+sub replace_word {
+   my ( $self, $hash, $string , $opt) = @_;
+   my $inital_state = $self->replace_word;
+   $self->replace_word(1);
+   $string = $self->replace($hash, $string, $opt);
+   $self->replace_word($inital_state);
+   return $string;
+}
    my ( $self, $list, $string , $opt) = @_;
    $opt->{strip} = 'word';
    return $self->strip($list, $string, $opt);
