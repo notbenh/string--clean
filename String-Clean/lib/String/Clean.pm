@@ -1,7 +1,6 @@
 package String::Clean;
-
-use warnings;
-use strict;
+use Moose;
+use MooseX::MutatorAttributes;
 use Carp::Assert::More;
 
 =head1 NAME
@@ -10,11 +9,11 @@ String::Clean - use data objects to clean strings
 
 =head1 VERSION
 
-Version 0.021
+Version 0.03
 
 =cut
 
-our $VERSION = '0.022';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -90,21 +89,34 @@ construction, and this will cascade down to each function call.
 =cut
 
 #---------------------------------------------------------------------------
-#  NEW
+#  Options
 #---------------------------------------------------------------------------
-sub new {
-   my ( $class, $opt ) = @_;
-   my $self = {};
-   if ( ref($opt) eq 'HASH' ) {
-      $self->{opt} = $opt;
-   }
-   return bless $self, $class;
-}
+has opt => (
+   is => 'rw',
+   isa => 'Str',
+);
+
+has escape => (
+   is => 'rw',
+   isa => 'Bool',
+   default => 1,
+);
+
+has [qw{replace_word strip_word}] => (
+   is => 'rw',
+   isa => 'Bool',
+   default => 0,
+);
+
+has word_boundary => (
+   is => 'rw',
+   isa => 'Str',
+   default => '\b',
+);
 
 #---------------------------------------------------------------------------
 #  REPLACE
 #---------------------------------------------------------------------------
-
 =head2 replace
 
 Takes a hash where the key is what to look for and the value is what to replace
@@ -118,11 +130,21 @@ sub replace {
    my ( $self, $hash, $string , $opt) = @_;
    assert_hashref($hash);
    assert_defined($string);
-   $opt = $self->_check_for_opt($opt);
-   my $o = _build_opt( $opt->{opt} );
-   my $b = _boundary( $opt->{word_boundary} );
+   $self->set(%$opt) if defined $opt && ref($opt) eq 'HASH';
 
+   while ( my ($search, $replace) = each %$hash ) {
+      $search = $self->_manage_search($search);
+      $search = quotemeta($search) if $self->escape ;
+      $search = sprintf q{(?%s)%s}, $self->opt, $search ;
+      if ( $self->replace_word ) {
+         $search  = sprintf q{(^|%s)%s(%1$s|$)}, $opt->word_boundary, $search;
+         $replace = sprintf q{$1%s$2}, $replace ;
+      }
+      $string =~ s/$search/$replace/g;
+   }
+=pod
    foreach my $key ( keys(%$hash) ) {
+
       my $qmkey = quotemeta($key) unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
    
       if ( defined($opt->{replace}) 
@@ -134,6 +156,7 @@ sub replace {
          $string =~ s/(?$o)$qmkey/$hash->{$key}/g;
       }
    }
+=cut
    return $string;
 }
 
@@ -147,8 +170,11 @@ A shortcut that does the same thing as passing {replace => 'word'} to replace.
 
 sub replace_word {
    my ( $self, $hash, $string , $opt) = @_;
-   $opt->{replace} = 'word';
-   return $self->replace($hash, $string, $opt);
+   my $inital_state = $self->replace_word;
+   $self->replace_word(1);
+   $string = $self->replace($hash, $string, $opt);
+   $self->replace_word($inital_state);
+   return $string;
 }
 
 
@@ -166,9 +192,27 @@ Takes an arrayref of items to completely remove from the string.
 
 sub strip {
    my ( $self, $list, $string , $opt) = @_;
-   assert_listref($list);
+=pod
+sub replace {
+   my ( $self, $hash, $string , $opt) = @_;
+   assert_hashref($hash);
    assert_defined($string);
-   $opt = $self->_check_for_opt($opt);
+   $self->set(%$opt) if defined $opt && ref($opt) eq 'HASH';
+
+   while ( my ($search, $replace) = each %$hash ) {
+      $search = quotemeta($search) if $self->escape ;
+      $search = sprintf q{(?%s)%s}, $self->opt, $search ;
+      if ( $self->replace_word ) {
+         $search  = sprintf q{(^|%s)%s(%1$s|$)}, $opt->word_boundary, $search;
+         $replace = sprintf q{$1%s$2}, $replace ;
+      }
+      $string =~ s/$search/$replace/g;
+   }
+=cut
+   assert_hashref($hash);
+   assert_defined($string);
+   $self->set(%$opt) if defined $opt && ref($opt) eq 'HASH';
+
    my $o = _build_opt($opt->{opt});
    my $b = _boundary( $opt->{word_boundary} );
    $list = [map{ quotemeta } @$list ] unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
@@ -294,6 +338,17 @@ sub clean_by_yaml {
 #---------------------------------------------------------------------------
 #  Helper function that do not get exported and should only be run localy
 #---------------------------------------------------------------------------
+sub _manage_search {
+   my ($search, $search) = @_;
+
+   $search = quotemeta($search) if $self->escape ;
+   $search = sprintf q{(?%s)%s}, $self->opt, $search ;
+   $search  = sprintf q{(^|%s)%s(%1$s|$)}, $opt->word_boundary, $search
+      if ( $self->replace_word ) ;
+
+   return $search;
+}
+
 
 sub _build_opt {
    my ($opt) = @_;
