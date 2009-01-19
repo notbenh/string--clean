@@ -3,9 +3,74 @@
 use strict;
 use warnings;
 
-use Test::More qw{no_plan};
-use String::Clean qw{replace strip};
+use Test::Most qw{no_plan};
+use String::Clean qw{replace replace_word strip strip_word};
 
+#---------------------------------------------------------------------------
+#  REPLACE
+#---------------------------------------------------------------------------
+is(
+   replace( { a => 'A' }, 'a add' ),
+   'A Add',
+   q{replace}
+);
+
+is(
+   replace( { a => 'A' }, 'a add', {word => 1} ),
+   'A add',
+   q{replace whole word}
+);
+
+is(
+   replace_word( { a => 'A' }, 'a add' ),
+   'A add',
+   q{replace_word}
+);
+
+
+#---------------------------------------------------------------------------
+#  STRIP
+#---------------------------------------------------------------------------
+
+is(
+   strip( [qw{ a d }], 'a add' ),
+   ' ',
+   q{strip}
+);
+
+is(
+   strip( [qw{ a d }], 'a add', {word => 1} ),
+   ' add',
+   q{strip whole word}
+);
+
+is(
+   strip_word( [qw{ a d }], 'a add' ),
+   ' add',
+   q{strip_word}
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+__END__
+
+print "\n" for 1..10;
 #---------------------------------------------------------------------------
 #  NEW
 #---------------------------------------------------------------------------
@@ -26,21 +91,33 @@ is (
 );
 
 is (
-   $obj->replace( { a => 'A' }, 'this is a test', {replace => 'word'}),
+   $obj->replace_word( { a => 'A' }, 'this is a test' ),
    'this is A test',
    q{word replace}
 );
 
 is (
-   $obj->replace( { a => 'A', '*' => '*' }, 'this,is,a,test', { replace => 'word', word_boundary => ','}),
+   $obj->replace_word( { a => 'A' }, 'this,is,a,test', { word_boundary => ','}),
    'this,is,A,test',
-   q{word replace}
+   q{word replace user word_bound}
+);
+
+is (
+   $obj->replace_word( { a => 'A' }, 'add a add' ),
+   'add A add',
+   q{word replace in middle}
 );
 
 is (
    $obj->replace_word( { a => 'A' }, 'a add' ),
    'A add',
-   q{word replace via replace_word}
+   q{word replace at start}
+);
+
+is (
+   $obj->replace_word( { a => 'A' }, 'add a' ),
+   'add A',
+   q{word replace at end}
 );
 
 is (

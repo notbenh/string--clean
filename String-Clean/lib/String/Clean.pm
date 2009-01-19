@@ -1,7 +1,151 @@
 package String::Clean;
-use Moose;
-use MooseX::MutatorAttributes;
 use Carp::Assert::More;
+use Exporter qw{import};
+our @EXPORT_OK = qw{
+   replace 
+   replace_word
+   strip
+   strip_word
+};
+
+
+sub _defaults {
+   return (
+      word_boundary => '\b',  # STR
+      opt           => '',    # STR
+      escape        => 1,     # BOOL
+      word          => 0,     # BOOL
+   );
+}
+
+#---------------------------------------------------------------------------
+#  Replace
+#---------------------------------------------------------------------------
+sub replace {
+   my ( $hash, $string, $opts ) = @_;
+
+   assert_hashref($hash);
+   assert_defined($string);
+   my $o = { _defaults(), %$opts };
+
+   while ( my ($search, $replace) = each %$hash ) {
+      $search = _manage_search($search, $o);
+      if ($opts->{word}) {
+         $string =~ s/$search/$1$replace$2/gx;
+      } else {
+         $string =~ s/$search/$replace/gx;
+      }
+   }
+   return $string;
+}
+
+sub replace_word {
+   my ( $hash, $string, $opts ) = @_;
+   assert_hashref($hash);
+   assert_defined($string);
+   my $o = { %$opts, word => 1 };
+   return replace($hash, $string, $o);
+}
+
+
+#---------------------------------------------------------------------------
+#  Strip
+#---------------------------------------------------------------------------
+sub strip {
+   my ( $list, $string , $opts) = @_;
+
+   assert_listref($list);
+   assert_defined($string);
+   my $o = { _defaults(), %$opts };
+   foreach my $search (@$list) {
+      $search = _manage_search($search, $o);
+      $string =~ s/$search//g;
+   }
+   return $string;
+}
+
+sub strip_word {
+   my ( $list, $string, $opts ) = @_;
+   assert_listref($list);
+   assert_defined($string);
+   my $o = { %$opts, word => 1 };
+   return strip($list, $string, $o);
+}
+
+
+#---------------------------------------------------------------------------
+#  YAML
+#---------------------------------------------------------------------------
+sub clean_by_yaml {
+   use YAML qw{Load LoadFile};
+   my ( $yaml, $string, $opts) = @_;
+   assert_nonref($yaml);
+   assert_defined($string);
+   my $o = { _defaults(), %$opts };
+
+   my @docs = ( -r $yaml ) 
+            ? LoadFile($yaml)
+            : Load($yaml);
+
+   foreach my $doc (@docs) {
+      if ( ref($doc) eq 'ARRAY' ) {
+         $string = $self->strip( $doc, $string, $o);
+      }
+      elsif ( ref($doc) eq 'HASH' ) {
+         $string = $self->replace( $doc, $string , $o);
+      }
+      else {
+         warn '!!! FAILURE !!! unknown type of data struct for $data. Skipping and moving on.';
+      }
+   }
+   return $string;
+}
+
+#---------------------------------------------------------------------------
+#  Helpers
+#---------------------------------------------------------------------------
+sub _manage_search {
+   my ($search, $opts) = @_;
+
+   $search = quotemeta($search) if $opts->{escape} ;
+   $search = sprintf q{(?-%s)%s}, $opts->{opt}, $search 
+      if defined $opts->{opt} && length $opts->{opt};
+   $search  = sprintf qr{(\^|%s)%s(%s|$)}, $opts->{word_boundary}, $search, $opts->{word_boundary}
+      if $opts->{word} ;
+   return $search;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1;
+
+__END__
+use Moose;
+use Carp::Assert::More;
+
+with qw{
+   MooseX::MutatorAttributes
+};
 
 =head1 NAME
 
@@ -91,9 +235,13 @@ construction, and this will cascade down to each function call.
 #---------------------------------------------------------------------------
 #  Options
 #---------------------------------------------------------------------------
+use constant SC_ATTR => qw{ opt escape word word_boundary };
+
 has opt => (
    is => 'rw',
    isa => 'Str',
+   default => '',
+   #default => '-i',
 );
 
 has escape => (
@@ -103,7 +251,8 @@ has escape => (
 );
 
 #  !!!!!!!!!!! CRAP !!!!!!!!!!!!
-has [qw{replace_word strip_word}] => (
+#has [qw{replace_word strip_word}] => (
+has word => (
    is => 'rw',
    isa => 'Bool',
    default => 0,
@@ -135,9 +284,11 @@ sub replace {
 
    while ( my ($search, $replace) = each %$hash ) {
       $search = $self->_manage_search($search);
-      $replace = sprintf q{$1%s$2}, $replace 
-         if ( $self->replace_word ) ;
-      $string =~ s/$search/$replace/g;
+      if ($self->word) {
+         $string =~ s/$search/$1$replace$2/gx;
+      } else {
+         $string =~ s/$search/$replace/gx;
+      }
    }
    return $string;
 }
@@ -152,10 +303,10 @@ A shortcut that does the same thing as passing {replace => 'word'} to replace.
 
 sub replace_word {
    my ( $self, $hash, $string , $opt) = @_;
-   my $inital_state = $self->replace_word;
-   $self->replace_word(1);
+   my $inital_state = $self->word;
+   $self->word(1);
    $string = $self->replace($hash, $string, $opt);
-   $self->replace_word($inital_state);
+   $self->word($inital_state);
    return $string;
 }
 
@@ -193,19 +344,13 @@ A shortcut that does the same thing as passing {strip => 'word'} to strip.
 =cut
 
 sub strip_word {
-sub replace_word {
    my ( $self, $hash, $string , $opt) = @_;
-   my $inital_state = $self->replace_word;
-   $self->replace_word(1);
+   my $inital_state = $self->word;
+   $self->word(1);
    $string = $self->replace($hash, $string, $opt);
-   $self->replace_word($inital_state);
+   $self->word($inital_state);
    return $string;
 }
-   my ( $self, $list, $string , $opt) = @_;
-   $opt->{strip} = 'word';
-   return $self->strip($list, $string, $opt);
-}
-
 
 #---------------------------------------------------------------------------
 #  CLEAN BY YAML
@@ -296,7 +441,6 @@ sub clean_by_yaml {
       else {
          warn '!!! FAILURE !!! unknown type of data struct for $data. Skipping and moveing on.';
       }
-
    }
    return $string;
 }
@@ -305,20 +449,20 @@ sub clean_by_yaml {
 #  Helper function that do not get exported and should only be run localy
 #---------------------------------------------------------------------------
 sub _manage_search {
-   my ($search, $search) = @_;
+   my ($self, $search) = @_;
 
    $search = quotemeta($search) if $self->escape ;
-   $search = sprintf q{(?%s)%s}, $self->opt, $search ;
-   $search  = sprintf q{(^|%s)%s(%1$s|$)}, $opt->word_boundary, $search
-      if ( $self->replace_word ) ;
+   $search = sprintf q{(?-%s)%s}, $self->opt, $search 
+      if length $self->opt;
+   $search  = sprintf qr{(\^|%s)%s(%s|$)}, $self->word_boundary, $search, $self->word_boundary
+      if $self->word ;
 
    return $search;
 }
 
-
 sub _build_opt {
-   my ($opt) = @_;
-   return ( defined( $opt ) ) ? $opt : '-i';
+   my ($self, $opt) = @_;
+   my $default = { map{ $_ => $self->$_} SC_ATTR };
 }
 
 sub _check_for_opt {
@@ -336,12 +480,6 @@ sub _check_for_opt {
    else {
       return $opt;
    }
-}
-
-
-sub _boundary {
-   my ( $b ) = @_;
-   return ( defined($b) ) ? $b : '\b';
 }
 
 
