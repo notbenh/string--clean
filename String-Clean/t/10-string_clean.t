@@ -4,7 +4,8 @@ use strict;
 use warnings;
 
 use Test::Most qw{no_plan};
-use String::Clean qw{replace replace_word strip strip_word};
+#use String::Clean qw{replace replace_word strip strip_word};
+use String::Clean qw{:all};
 
 #---------------------------------------------------------------------------
 #  REPLACE
@@ -31,7 +32,6 @@ is(
 #---------------------------------------------------------------------------
 #  STRIP
 #---------------------------------------------------------------------------
-
 is(
    strip( [qw{ a d }], 'a add' ),
    ' ',
@@ -51,7 +51,45 @@ is(
 );
 
 
+#---------------------------------------------------------------------------
+#  YAML
+#---------------------------------------------------------------------------
+my $yaml = q{
+---
+ctrl     : was_ctrl
+---
+alt      : ctrl
+---
+was_ctrl : alt
+};
 
+is(
+   clean_by_yaml($yaml, 'ctrl alt'),
+   'alt ctrl',
+   q{invert by yaml},
+);
+
+use File::Fu;
+my $doc = File::Fu->file( File::Fu->program_dir('.') + 'yaml/amp.yaml' )->stringify;
+
+is(
+   clean_by_yaml($doc, '\x96 &&amp;'),
+   '\x96 &&amp;',
+   '[LOGICAL FAILURE] external yaml doc with default escape',
+);
+
+is(
+   clean_by_yaml($doc, '\x96 &&amp;', {escape => 0}),
+   ' andand',
+   'external yaml doc',
+);
+   
+is(
+   clean_by_yaml('./yaml/amp.yaml', '\x96 &&amp;', {escape => 0}),
+   ' andand',
+   'external yaml doc',
+);
+   
 
 
 
