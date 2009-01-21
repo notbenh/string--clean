@@ -87,7 +87,7 @@ sub clean_by_yaml {
 
    my $rel = sub{ use File::Fu;
                   my ($file) = @_;
-                  return File::Fu->file( File::Fu->program_dir('.') + $file )->stringify;
+                  return ( File::Fu->program_dir + $file )->stringify;
                 };
 
    my @docs = ( -r $yaml )         ? LoadFile($yaml) 
