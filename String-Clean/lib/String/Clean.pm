@@ -25,7 +25,6 @@ sub _defaults {
 #---------------------------------------------------------------------------
 sub replace {
    my ( $hash, $string, $opts ) = @_;
-
    assert_hashref($hash);
    assert_defined($string);
    my $o = { _defaults(), %$opts };
@@ -90,9 +89,11 @@ sub clean_by_yaml {
                   return ( File::Fu->program_dir + $file )->stringify;
                 };
 
-   my @docs = ( -r $yaml )         ? LoadFile($yaml) 
-            : ( -r $rel->($yaml) ) ? LoadFile( $rel->($yaml) )
-            :                        Load($yaml);
+   my @docs = ( ref($yaml) eq 'HASH')   ? $yaml
+            : ( ref($yaml) eq 'ARRAY')  ? @$yaml
+            : ( -r $yaml )              ? LoadFile($yaml) 
+            : ( -r $rel->($yaml) )      ? LoadFile( $rel->($yaml) )
+            :                             Load($yaml);
 
    foreach my $doc (@docs) {
       if ( ref($doc) eq 'ARRAY' ) {
