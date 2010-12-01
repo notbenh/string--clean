@@ -4,17 +4,7 @@ use warnings;
 use strict;
 use Carp::Assert::More;
 
-=head1 NAME
-
-String::Clean - use data objects to clean strings
-
-=head1 VERSION
-
-Version 0.021
-
-=cut
-
-our $VERSION = '0.022';
+# ABSTRACT: use data objects to clean strings
 
 =head1 SYNOPSIS
 
@@ -97,6 +87,7 @@ sub new {
    my $self = {};
    if ( ref($opt) eq 'HASH' ) {
       $self->{opt} = $opt;
+      $self->{yaml}= {};
    }
    return bless $self, $class;
 }
@@ -274,9 +265,11 @@ sub clean_by_yaml {
    my ( $self, $yaml, $string, $opt) = @_;
    assert_defined($yaml);
    assert_defined($string);
+   #$opt = $self->_check_for_opt($opt);
+   $self->{yaml}->{$yaml} = [Load($yaml)]
+      unless defined $self->{yaml}->{$yaml};
    $opt = $self->_check_for_opt($opt);
-   my @data = Load($yaml);
-   foreach my $doc (@data) {
+   foreach my $doc (@{ $self->{yaml}->{$yaml} }) {
       if ( ref($doc) eq 'ARRAY' ) {
          $string = $self->strip( $doc, $string, $opt);
       }
