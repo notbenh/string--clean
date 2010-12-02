@@ -115,6 +115,7 @@ sub replace {
 
    foreach my $key ( keys(%$hash) ) {
       my $qmkey = quotemeta($key) unless ( defined($opt->{escape}) && $opt->{escape} =~ m/^no$/ );
+      next unless defined $qmkey;
    
       if ( defined($opt->{replace}) 
            && $opt->{replace} =~ m/^word$/i 
@@ -261,7 +262,7 @@ will have to happen as seprate calls.
 =cut
 
 sub clean_by_yaml {
-   use YAML;
+   use YAML::Any;
    my ( $self, $yaml, $string, $opt) = @_;
    assert_defined($yaml);
    assert_defined($string);
